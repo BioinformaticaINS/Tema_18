@@ -2,16 +2,15 @@
 
 ## Basecalling de los datos de secuenciamiento y visualización de la calidad y limpieza de los archivos FASTQ
 
-### Logro de la Sesión: Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FAST5 y la limpieza de los archivos FASTQ con herramientas bioinformáticas.
+### Logro de la Sesión: Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FAST5 y la limpieza de archivos FASTQ con herramientas bioinformáticas.
 
 ## Estructura de la práctica:
 
-1. Análisis de calidad del secuenciamiento Illumina (30 minutos)
-2. Limpieza de los archivos FASTQ de Illumina (40 minutos)
-3. Basecalling de los archivos FAST5 (40 minutos)
-4. Análisis de calidad del secuenciamiento Nanopore (30 minutos)
-5. Limpieza de los archivos FASTQ de Nanopore (80 minutos)
-6. Ejercicio grupal (120 minutos)
+1. Análisis de calidad del secuenciamiento Illumina
+2. Limpieza de los archivos FASTQ de Illumina
+3. Basecalling de los archivos FAST5
+4. Análisis de calidad del secuenciamiento Nanopore 
+5. Limpieza de los archivos FASTQ de Nanopore 
 
 ## Programas bioinformáticos:
 

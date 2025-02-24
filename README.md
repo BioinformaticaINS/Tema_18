@@ -1,6 +1,6 @@
 # Tema 18: Obtención, calidad y limpieza de lecturas
 
-## Basecalling de los datos de secuenciamiento y visualización de la calidad y limpieza de los archivos FASTQ
+## Basecalling de los datos de secuenciación, visualización de la calidad y limpieza de los archivos FASTQ
 
 ### Logro de la Sesión: Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FAST5 y la limpieza de archivos FASTQ con herramientas bioinformáticas.
 

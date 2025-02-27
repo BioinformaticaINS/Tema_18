@@ -89,7 +89,7 @@ $ watch -d -n 0.5 nvidia-smi
 $ guppy_basecaller -i /data/2024_2/genome/fast5/barcode00/ -s barcode00 -c dna_r10.4_e8.1_fast.cfg -x 'cuda:0' --num_callers 4 --gpu_runners_per_device 8
 ```
 
-#### Instalacion del programa Dorado
+### Instalacion del programa Dorado
 
 Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
 

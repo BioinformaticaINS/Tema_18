@@ -6,12 +6,11 @@ Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FA
 
 ## Estructura de la práctica:
 
-1. Llamado de bases (fast5 --> pod5 --> fastq)
-3.  Análisis de calidad del secuenciamiento Illumina
-4. Limpieza de los archivos FASTQ de Illumina
-5. Basecalling de los archivos FAST5
-6. Análisis de calidad del secuenciamiento Nanopore 
-7. Limpieza de los archivos FASTQ de Nanopore 
+1.  Análisis de calidad del secuenciamiento Illumina
+2. Limpieza de los archivos FASTQ de Illumina
+3. Basecalling de los archivos FAST5
+4. Análisis de calidad del secuenciamiento Nanopore 
+5. Limpieza de los archivos FASTQ de Nanopore 
 
 ## Programas bioinformáticos:
 
@@ -27,7 +26,68 @@ Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FA
 
 ## Metodología:
 
-### 1. Llamado de bases
+## 1. Análisis de calidad del secuenciamiento Illumina (30 minutos)
+
+```bash
+$ cd
+$ mkdir illumina
+$ cd illumina
+$ mkdir quality
+$ cd quality
+$ conda activate nanopore_01
+$ fastqc -t 10 /data/2024_2/genome/illumina/*.fastq.gz -o .
+```
+
+### 2. Limpieza de los archivos FASTQ de Illumina (40 minutos)
+
+```bash
+$ cd ~/illumina/
+$ mkdir trim
+$ cd trim
+$ mkdir trim_galore
+$ cd trim_galore
+$ trim_galore --quality 30 --length 50 --phred33 --cores 4 --fastqc --paired /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz
+```
+
+```bash
+$ cd ~/b00_genome/illumina/trim/
+$ mkdir trimmomatic
+$ cd trimmomatic
+$ nano NexteraPE.fa
+```
+
+```plaintext
+>PrefixNX/1
+AGATGTGTATAAGAGACAG
+>PrefixNX/2
+AGATGTGTATAAGAGACAG
+>Trans1
+TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
+>Trans1_rc
+CTGTCTCTTATACACATCTGACGCTGCCGACGA
+>Trans2
+GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
+>Trans2_rc
+CTGTCTCTTATACACATCTCCGAGCCCACGAGAC
+```
+
+```bash
+$ trimmomatic PE /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz CAT_R1.trim.fastq.gz CAT_R1.unpaired.fastq.gz CAT_R2.trim.fastq.gz CAT_R2.unpaired.fastq.gz ILLUMINACLIP:NexteraPE.fa:2:30:10 SLIDINGWINDOW:4:30 MINLEN:50 -threads 10
+$ fastqc -t 10 *.trim.fastq.gz -o .
+```
+
+## 3. Basecalling de los archivos FAST5 (40 minutos)
+
+```bash
+$ cd
+$ mkdir b00_genome
+$ cd b00_genome
+$ mkdir basecalling
+$ cd basecalling
+$ nvidia-smi --query-gpu=name --format=csv,noheader
+$ watch -d -n 0.5 nvidia-smi
+$ guppy_basecaller -i /data/2024_2/genome/fast5/barcode00/ -s barcode00 -c dna_r10.4_e8.1_fast.cfg -x 'cuda:0' --num_callers 4 --gpu_runners_per_device 8
+```
 
 #### Instalacion del programa Dorado
 
@@ -181,69 +241,6 @@ SQK-16S024_barcode16_sorted.fastq  FASTQ   DNA     14,146   15,581,836        2 
 SQK-16S024_barcode17_sorted.fastq  FASTQ   DNA     17,988   18,836,740        2  1,047.2    3,057      624  1,304.5  1,399        0  1,380   50.24    7.07
 SQK-16S024_barcode18_sorted.fastq  FASTQ   DNA     16,030   16,605,426        2  1,035.9    2,088      537    1,287  1,399        0  1,386   50.48    7.85
 unclassified_sorted.fastq          FASTQ   DNA    474,168  648,009,092        7  1,366.6    4,216    1,393    1,405  1,421        0  1,406   53.45    8.42
-```
-
-## 2. Análisis de calidad del secuenciamiento Illumina (30 minutos)
-
-```bash
-$ cd
-$ mkdir illumina
-$ cd illumina
-$ mkdir quality
-$ cd quality
-$ conda activate nanopore_01
-$ fastqc -t 10 /data/2024_2/genome/illumina/*.fastq.gz -o .
-```
-
-### 3. Limpieza de los archivos FASTQ de Illumina (40 minutos)
-
-```bash
-$ cd ~/illumina/
-$ mkdir trim
-$ cd trim
-$ mkdir trim_galore
-$ cd trim_galore
-$ trim_galore --quality 30 --length 50 --phred33 --cores 4 --fastqc --paired /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz
-```
-
-```bash
-$ cd ~/b00_genome/illumina/trim/
-$ mkdir trimmomatic
-$ cd trimmomatic
-$ nano NexteraPE.fa
-```
-
-```plaintext
->PrefixNX/1
-AGATGTGTATAAGAGACAG
->PrefixNX/2
-AGATGTGTATAAGAGACAG
->Trans1
-TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG
->Trans1_rc
-CTGTCTCTTATACACATCTGACGCTGCCGACGA
->Trans2
-GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
->Trans2_rc
-CTGTCTCTTATACACATCTCCGAGCCCACGAGAC
-```
-
-```bash
-$ trimmomatic PE /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz CAT_R1.trim.fastq.gz CAT_R1.unpaired.fastq.gz CAT_R2.trim.fastq.gz CAT_R2.unpaired.fastq.gz ILLUMINACLIP:NexteraPE.fa:2:30:10 SLIDINGWINDOW:4:30 MINLEN:50 -threads 10
-$ fastqc -t 10 *.trim.fastq.gz -o .
-```
-
-## 3. Basecalling de los archivos FAST5 (40 minutos)
-
-```bash
-$ cd
-$ mkdir b00_genome
-$ cd b00_genome
-$ mkdir basecalling
-$ cd basecalling
-$ nvidia-smi --query-gpu=name --format=csv,noheader
-$ watch -d -n 0.5 nvidia-smi
-$ guppy_basecaller -i /data/2024_2/genome/fast5/barcode00/ -s barcode00 -c dna_r10.4_e8.1_fast.cfg -x 'cuda:0' --num_callers 4 --gpu_runners_per_device 8
 ```
 
 ## 4. Análisis de calidad del secuenciamiento Nanopore (30 minutos)

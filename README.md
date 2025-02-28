@@ -12,21 +12,74 @@
 
 ## Programas bioinformáticos:
 
-- **dorado **: [Pagina web](https://github.com/nanoporetech/dorado) 
-- **fastqc **: [Pagina web](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-- **guppy **: [Pagina web](https://community.nanoporetech.com/downloads/)
-- **nanofilt **: [Pagina web](https://github.com/wdecoster/nanofilt)
-- **nanoplot **: [Pagina web](https://github.com/wdecoster/NanoPlot)
-- **multiqc **: [Pagina web](https://github.com/ewels/MultiQC)
-- **porechop **: [Pagina web](https://github.com/rrwick/Porechop)
-- **trimgalore **: [Pagina web](https://github.com/FelixKrueger/TrimGalore)
-- **trimmomatic **: [Pagina web](http://www.usadellab.org/cms/?page=trimmomatic)
+- dorado : [Pagina web](https://github.com/nanoporetech/dorado) 
+- fastqc : [Pagina web](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+- guppy : [Pagina web](https://community.nanoporetech.com/downloads/)
+- nanofilt : [Pagina web](https://github.com/wdecoster/nanofilt)
+- nanoplot : [Pagina web](https://github.com/wdecoster/NanoPlot)
+- multiqc : [Pagina web](https://github.com/ewels/MultiQC)
+- porechop : [Pagina web](https://github.com/rrwick/Porechop)
+- trimgalore : [Pagina web](https://github.com/FelixKrueger/TrimGalore)
+- trimmomatic : [Pagina web](http://www.usadellab.org/cms/?page=trimmomatic)
 
 ## Metodología:
 
 ## 1. Instalación de programas
 
-### Instalar guppy
+### Instalación de guppy
+
+cd
+
+mkdir software
+
+cd software
+
+pip install gdown
+
+gdown https://drive.google.com/uc?id=1eGGqEJUsHj5rzc5S4LGDvhj0ov6lsr-3
+
+sudo dpkg -i ont_guppy_cpu_6.5.7-1~focal_amd64.deb 
+
+guppy_basecaller -h
+
+### Instalacion de dorado
+
+Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
+
+```bash
+pwd # Te mostrará la siguiente ruta /home/user/
+mkdir Bioprograms
+cd Bioprograms
+wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
+```
+
+> **Comentario:** Estas líneas de código descargan el programa dorado desde el sitio web de Oxford Nanopore.
+
+### Descomprimir el programa
+
+```bash
+tar xvfz dorado-0.7.2-linux-x64.tar.gz
+cd dorado-0.7.2-linux-x64
+cd bin
+pwd # /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin
+sudo ln -s /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin/dorado /usr/local/bin/dorado
+dorado --help
+```
+
+> **Comentario:** Estas líneas de código descomprimen el archivo descargado y crean un enlace simbólico al ejecutable de dorado en `/usr/local/bin/`, lo que permite ejecutar dorado desde cualquier lugar en el sistema.
+
+### Instalar POD5
+
+Convertir fast5 a pod5 antes del basecalling
+
+> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5.
+
+```bash
+pip install pod5 (nivel de usuario)
+```
+
+
+
 
 
 ### Instalar los siguientes programas en un ambiente de conda
@@ -98,41 +151,7 @@ $ watch -d -n 0.5 nvidia-smi
 $ guppy_basecaller -i /data/2024_2/genome/fast5/barcode00/ -s barcode00 -c dna_r10.4_e8.1_fast.cfg -x 'cuda:0' --num_callers 4 --gpu_runners_per_device 8
 ```
 
-### Instalacion del programa Dorado
 
-Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
-
-```bash
-pwd # Te mostrará la siguiente ruta /home/user/
-mkdir Bioprograms
-cd Bioprograms
-wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
-```
-
-> **Comentario:** Estas líneas de código descargan el programa dorado desde el sitio web de Oxford Nanopore.
-
-### Descomprimir el programa
-
-```bash
-tar xvfz dorado-0.7.2-linux-x64.tar.gz
-cd dorado-0.7.2-linux-x64
-cd bin
-pwd # /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin
-sudo ln -s /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin/dorado /usr/local/bin/dorado
-dorado --help
-```
-
-> **Comentario:** Estas líneas de código descomprimen el archivo descargado y crean un enlace simbólico al ejecutable de dorado en `/usr/local/bin/`, lo que permite ejecutar dorado desde cualquier lugar en el sistema.
-
-### Instalar POD5
-
-Convertir fast5 a pod5 antes del basecalling
-
-> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5.
-
-```bash
-pip install pod5 (nivel de usuario)
-```
 
 > **Comentario:** Esta línea de código instala la biblioteca de Python `pod5`, que se utiliza para interactuar con archivos POD5.
 

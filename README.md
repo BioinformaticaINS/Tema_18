@@ -65,27 +65,25 @@ sudo ln -s /home/ins_user/software/dorado-0.9.1-linux-x64/bin/dorado /usr/local/
 dorado --help
 ```
 
-### Instalar POD5
+### Instalación de POD5
 
-Convertir fast5 a pod5 antes del basecalling
+Permite convertir fast5 a pod5 antes del basecalling
 
 > **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5.
 
 ```bash
-pip install pod5 (nivel de usuario)
+pip install pod5 
 ```
-
-
-
-
 
 ### Instalar los siguientes programas en un ambiente de conda
 
+```bash
 conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trimgalore trimmomatic
 
 conda activate quality
+```
 
-## 2. Análisis de calidad del secuenciamiento Illumina (30 minutos)
+## 2. Análisis de calidad del secuenciamiento Illumina
 
 ```bash
 $ cd

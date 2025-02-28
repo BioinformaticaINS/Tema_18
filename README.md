@@ -1,20 +1,17 @@
 # Tema 18: Obtención, calidad y limpieza de lecturas
 
-## Logro de la Sesión: 
-
-Al finalizar la sesión, el estudiante realiza el basecalling de los archivos FAST5 y la limpieza de archivos FASTQ con herramientas bioinformáticas.
-
 ## Estructura de la práctica:
 
-1.  Análisis de calidad del secuenciamiento Illumina
+1. Análisis de calidad del secuenciamiento Illumina
 2. Limpieza de los archivos FASTQ de Illumina
 3. Basecalling de los archivos FAST5
-4. Análisis de calidad del secuenciamiento Nanopore 
-5. Limpieza de los archivos FASTQ de Nanopore 
+4. Basecalling de los archivos POD5
+5. Análisis de calidad del secuenciamiento Nanopore 
+6. Limpieza de los archivos FASTQ de Nanopore 
 
 ## Programas bioinformáticos:
 
-- **dorado v0.7.2**: [Descargar](https://github.com/nanoporetech/dorado) 
+- **dorado v0.7.2**: [Pagina web](https://github.com/nanoporetech/dorado) 
 - **fastqc v0.12.1**: [Descargar](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
 - **guppy v6.5.7**: [Descargar](https://community.nanoporetech.com/downloads/)
 - **nanofilt v2.8.0**: [Descargar](https://github.com/wdecoster/nanofilt)

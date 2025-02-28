@@ -78,7 +78,7 @@ pip install pod5
 ### Instalar los siguientes programas en un ambiente de conda
 
 ```bash
-conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trimgalore trimmomatic
+conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trim-galore trimmomatic
 
 conda activate quality
 ```

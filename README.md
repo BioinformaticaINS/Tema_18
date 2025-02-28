@@ -2,28 +2,40 @@
 
 ## Estructura de la práctica:
 
-1. Análisis de calidad del secuenciamiento Illumina
-2. Limpieza de los archivos FASTQ de Illumina
-3. Basecalling de los archivos FAST5
-4. Basecalling de los archivos POD5
-5. Análisis de calidad del secuenciamiento Nanopore 
-6. Limpieza de los archivos FASTQ de Nanopore 
+1. Instalación de programas
+2. Análisis de calidad del secuenciamiento Illumina
+3. Limpieza de los archivos FASTQ de Illumina
+4. Basecalling de los archivos FAST5
+5. Basecalling de los archivos POD5
+6. Análisis de calidad del secuenciamiento Nanopore 
+7. Limpieza de los archivos FASTQ de Nanopore 
 
 ## Programas bioinformáticos:
 
-- **dorado v0.7.2**: [Pagina web](https://github.com/nanoporetech/dorado) 
-- **fastqc v0.12.1**: [Descargar](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-- **guppy v6.5.7**: [Descargar](https://community.nanoporetech.com/downloads/)
-- **nanofilt v2.8.0**: [Descargar](https://github.com/wdecoster/nanofilt)
-- **nanoplot v1.41.6**: [Descargar](https://github.com/wdecoster/NanoPlot)
-- **pycoqc v2.5.2**: [Descargar](https://github.com/a-slide/pycoQC)
-- **porechop v0.2.4**: [Descargar](https://github.com/rrwick/Porechop)
-- **trimgalore v0.6.10**: [Descargar](https://github.com/FelixKrueger/TrimGalore)
-- **trimmomatic v0.39**: [Descargar](http://www.usadellab.org/cms/?page=trimmomatic)
+- **dorado **: [Pagina web](https://github.com/nanoporetech/dorado) 
+- **fastqc **: [Pagina web](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
+- **guppy **: [Pagina web](https://community.nanoporetech.com/downloads/)
+- **nanofilt **: [Pagina web](https://github.com/wdecoster/nanofilt)
+- **nanoplot **: [Pagina web](https://github.com/wdecoster/NanoPlot)
+- **multiqc **: [Pagina web](https://github.com/ewels/MultiQC)
+- **porechop **: [Pagina web](https://github.com/rrwick/Porechop)
+- **trimgalore **: [Pagina web](https://github.com/FelixKrueger/TrimGalore)
+- **trimmomatic **: [Pagina web](http://www.usadellab.org/cms/?page=trimmomatic)
 
 ## Metodología:
 
-## 1. Análisis de calidad del secuenciamiento Illumina (30 minutos)
+## 1. Instalación de programas
+
+### Instalar guppy
+
+
+### Instalar los siguientes programas en un ambiente de conda
+
+conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trimgalore trimmomatic
+
+conda activate quality
+
+## 2. Análisis de calidad del secuenciamiento Illumina (30 minutos)
 
 ```bash
 $ cd
@@ -94,7 +106,7 @@ Dorado es un programa de basecalling y análisis de datos de secuenciación de n
 pwd # Te mostrará la siguiente ruta /home/user/
 mkdir Bioprograms
 cd Bioprograms
-wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.7.2-linux-x64.tar.gz
+wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
 ```
 
 > **Comentario:** Estas líneas de código descargan el programa dorado desde el sitio web de Oxford Nanopore.

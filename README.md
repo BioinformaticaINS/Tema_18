@@ -28,6 +28,7 @@
 
 ### Instalación de guppy
 
+```bash
 cd
 
 mkdir software
@@ -41,6 +42,7 @@ gdown https://drive.google.com/uc?id=1eGGqEJUsHj5rzc5S4LGDvhj0ov6lsr-3
 sudo dpkg -i ont_guppy_cpu_6.5.7-1~focal_amd64.deb 
 
 guppy_basecaller -h
+```
 
 ### Instalacion de dorado
 

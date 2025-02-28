@@ -28,6 +28,8 @@
 
 ### Instalación de guppy
 
+Guppy es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
+
 ```bash
 cd
 
@@ -49,26 +51,19 @@ guppy_basecaller -h
 Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
 
 ```bash
-pwd # Te mostrará la siguiente ruta /home/user/
-mkdir Bioprograms
-cd Bioprograms
+
 wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
-```
 
-> **Comentario:** Estas líneas de código descargan el programa dorado desde el sitio web de Oxford Nanopore.
+tar xvfz dorado-0.9.1-linux-x64.tar.gz
 
-### Descomprimir el programa
+cd dorado-0.9.1-linux-x64
 
-```bash
-tar xvfz dorado-0.7.2-linux-x64.tar.gz
-cd dorado-0.7.2-linux-x64
 cd bin
-pwd # /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin
-sudo ln -s /home/user/Bioprograms/dorado-0.7.2-linux-x64/bin/dorado /usr/local/bin/dorado
+
+sudo ln -s /home/ins_user/software/dorado-0.9.1-linux-x64/bin/dorado /usr/local/bin/dorado
+
 dorado --help
 ```
-
-> **Comentario:** Estas líneas de código descomprimen el archivo descargado y crean un enlace simbólico al ejecutable de dorado en `/usr/local/bin/`, lo que permite ejecutar dorado desde cualquier lugar en el sistema.
 
 ### Instalar POD5
 

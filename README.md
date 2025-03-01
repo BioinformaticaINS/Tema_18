@@ -8,18 +8,6 @@
 4. Basecalling de datos de secuenciación Nanopore
 5. Análisis de calidad de datos de secuenciación Nanopore
 
-## Programas bioinformáticos:
-
-- dorado : [Pagina web](https://github.com/nanoporetech/dorado) 
-- fastqc : [Pagina web](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/)
-- guppy : [Pagina web](https://community.nanoporetech.com/downloads/)
-- nanofilt : [Pagina web](https://github.com/wdecoster/nanofilt)
-- nanoplot : [Pagina web](https://github.com/wdecoster/NanoPlot)
-- multiqc : [Pagina web](https://github.com/ewels/MultiQC)
-- porechop : [Pagina web](https://github.com/rrwick/Porechop)
-- trimgalore : [Pagina web](https://github.com/FelixKrueger/TrimGalore)
-- trimmomatic : [Pagina web](http://www.usadellab.org/cms/?page=trimmomatic)
-
 ## Metodología:
 
 ## 1. Instalación de programas

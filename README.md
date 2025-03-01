@@ -73,7 +73,7 @@ dorado --help
 
 Permite convertir fast5 a pod5 antes del basecalling
 
-> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5.
+> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5
 
 ```bash
 pip install pod5 
@@ -102,9 +102,9 @@ gdown https://drive.google.com/uc?id=1GUHeRwpfelPAmU5b6dPoiT79iQ-QQYMP
 
 ### Datos de Nanopore
 
-gdown https://drive.google.com/uc?id=1sJ_07QKeTq4DbyyQWPY5aqU8Nyf2bBoO
+gdown https://drive.google.com/uc?id=1FyGJAS33tB-DkbAiL2195ACaWf_qIi3Z
 
-gdown https://drive.google.com/uc?id=1uU_4PkarRHT6NHYru3YjRTAlKmAzAOh2
+gdown https://drive.google.com/uc?id=1FP6zi0jJmPf6n1ic0Fd3Cdytcf8gY3bk
 
 unzip pod5.zip
 
@@ -145,6 +145,8 @@ mkdir trim_galore
 cd trim_galore
 
 trim_galore --quality 30 --length 50 --phred33 --cores 2 --fastqc --paired /home/ins_user/genomics/raw_data/T4_S1_L001_R1_001.fastq.gz /home/ins_user/genomics/raw_data/T4_S1_L001_R2_001.fastq.gz
+
+multiqc -o trimming_trim_galore .
 ```
 
 ### Limpieza con trimmomatic
@@ -156,9 +158,10 @@ mkdir trimmomatic
 
 cd trimmomatic
 
+> **Comentario:** Crear el archivo NexteraPE.fa
+
 nano NexteraPE.fa
 
-```plaintext
 >PrefixNX/1
 AGATGTGTATAAGAGACAG
 >PrefixNX/2
@@ -171,37 +174,35 @@ CTGTCTCTTATACACATCTGACGCTGCCGACGA
 GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
 >Trans2_rc
 CTGTCTCTTATACACATCTCCGAGCCCACGAGAC
+
+trimmomatic PE /home/ins_user/genomics/raw_data/T4_S1_L001_R1_001.fastq.gz /home/ins_user/genomics/raw_data/T4_S1_L001_R2_001.fastq.gz T4_R1.trim.fastq.gz T4_R1.unpaired.fastq.gz T4_R2.trim.fastq.gz T4_R2.unpaired.fastq.gz ILLUMINACLIP:NexteraPE.fa:2:30:10 SLIDINGWINDOW:4:30 MINLEN:50 -threads 2
+
+fastqc -t 2 *.trim.fastq.gz -o .
+
+multiqc -o trimming_trimmomatic .
 ```
+
+## 4. Basecalling de datos de secuenciación Nanopore
+
+### Basecalling de FAST5
 
 ```bash
-$ trimmomatic PE /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz CAT_R1.trim.fastq.gz CAT_R1.unpaired.fastq.gz CAT_R2.trim.fastq.gz CAT_R2.unpaired.fastq.gz ILLUMINACLIP:NexteraPE.fa:2:30:10 SLIDINGWINDOW:4:30 MINLEN:50 -threads 10
-$ fastqc -t 10 *.trim.fastq.gz -o .
+cd ~/genomics
+
+mkdir basecalling
+
+cd basecalling
+
+guppy_basecaller -i /home/ins_user/genomics/raw_data/fast5 -s fast5 -c dna_r10.4_e8.1_fast.cfg
 ```
 
-## 3. Basecalling de los archivos FAST5 (40 minutos)
-
-```bash
-$ cd
-$ mkdir b00_genome
-$ cd b00_genome
-$ mkdir basecalling
-$ cd basecalling
-$ nvidia-smi --query-gpu=name --format=csv,noheader
-$ watch -d -n 0.5 nvidia-smi
-$ guppy_basecaller -i /data/2024_2/genome/fast5/barcode00/ -s barcode00 -c dna_r10.4_e8.1_fast.cfg -x 'cuda:0' --num_callers 4 --gpu_runners_per_device 8
-```
-
-
-
-> **Comentario:** Esta línea de código instala la biblioteca de Python `pod5`, que se utiliza para interactuar con archivos POD5.
-
-### Ejecutar POD5
+### Basecalling de POD5
 
 ```bash
 pod5 convert fast5 fast5/*.fast5 --output converted.pod5
 ```
 
-> **Comentario:** Esta línea de código utiliza `pod5` para convertir todos los archivos FAST5 en el directorio `fast5` a un único archivo POD5 llamado `converted.pod5`.
+> **Comentario:** Esta línea de código utiliza `pod5` para convertir todos los archivos FAST5 en el directorio `fast5` a un único archivo POD5 llamado `converted.pod5`
 
 ### Descargar modelos con dorado
 
@@ -373,16 +374,3 @@ $ cd ~/b00_genome/quality/nanoplot/
 $ NanoPlot -t 20 --fastq /home/alumnoZZ/b00_genome/trim/nanofilt/b00_sup_nanofilt.fastq.gz -p b00_sup_nanofilt_ -o b00_sup_nanofilt --maxlength 100000000
 ```
 
-## 6. Aplicación de las herramientas bioinformáticas (80 minutos)
-
-- Realizar el análisis de calidad de los archivos FASTQ de su respectivo barcode que fueron obtenidos con un basecalling en configuración sup.
-- Utilizar el index sup para diferenciarlos del análisis de calidad realizado previamente.
-- Los datos están localizados en la siguiente ruta: `/data/2024_2/genome/fastq/barcode00/pass/`
-
-## Resultados:
-
-- Valores de calidad antes y después de la limpieza de los archivos FASTQ obtenidos en el basecalling en configuración SUP (porechop + nanofilt + nanoplot)
-
-## Conclusiones:
-
-- Indicar si la limpieza de las lecturas obtenidas con la configuración SUP fue necesaria y explicar que características de las lecturas mejoraron.

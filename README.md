@@ -82,8 +82,23 @@ pip install pod5
 ### Instalar los siguientes programas en un ambiente de conda
 
 ```bash
-conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trim-galore trimmomatic
+conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trim-galore trimmomatic seqkit samtools bedtools
 ```
+
+> **Comentario:** 
+> - `conda create`: Este es el comando base para crear un nuevo entorno virtual con conda.
+> - `-n quality`: Esta opción especifica el nombre del nuevo entorno virtual, que será "quality". Los entornos virtuales permiten tener diferentes versiones de software instaladas sin que interfieran entre sí.
+> - `-c bioconda`: Esta opción le dice a conda que busque los paquetes a instalar en el canal "bioconda". Bioconda es un canal de conda especializado en software bioinformático, lo que garantiza que las herramientas estén optimizadas para análisis de datos biológicos.
+> - `fastqc`: Instala FastQC, una herramienta para el control de calidad de datos de secuenciación de alto rendimiento (NGS).
+> - `nanofilt`: Instala NanoFilt, una herramienta para filtrar datos de secuenciación de Oxford Nanopore Technologies (ONT) basándose en la longitud y la calidad de las lecturas.
+> - `nanoplot`: Instala NanoPlot, una herramienta para visualizar datos de secuenciación de ONT.
+> - `multiqc`: Instala MultiQC, una herramienta que agrega los resultados de múltiples herramientas de control de calidad en un único informe HTML.
+> - `porechop`: Instala Porechop, una herramienta para recortar adaptadores y detectar lecturas de concatenación en datos de secuenciación de ONT.
+> - `trim-galore`: Instala Trim Galore!, un envoltorio (wrapper) que combina Cutadapt y FastQC para recortar adaptadores y realizar control de calidad en datos de secuenciación de alto rendimiento (NGS).
+> - `trimmomatic`: Instala Trimmomatic, otra herramienta popular para recortar adaptadores y realizar control de calidad en datos de secuenciación de alto rendimiento (NGS).
+> - `seqkit`: Instala seqkit, una caja de herramientas rápida y multiplataforma para manipular archivos de secuencia FASTA/Q.
+> - `samtools`: Instala samtools, una suite de herramientas para manipular archivos SAM/BAM (formatos para almacenar datos de alineamiento de secuencias).
+> - `bedtools`: Instala bedtools, una suite de utilidades para realizar operaciones con archivos BED (formatos para definir regiones genómicas).
 
 ## 2. Obtención de los datos de secuenciación 
 
@@ -137,6 +152,9 @@ fastqc -t 2 /data/2024_2/genome/illumina/*.fastq.gz -o .
 ```bash
 multiqc -o raw_illumina .
 ```
+> **Comentario:**
+> - `-o raw_illumina`: Esta opción especifica el directorio de salida donde se guardará el informe HTML generado por MultiQC.
+> - `.`: Representa el directorio actual. Esto le dice a MultiQC que busque archivos de resultados (los que ha generado FastQC por ejemplo) dentro del directorio en el que estás ejecutando el comando. MultiQC buscará automáticamente archivos de salida de las herramientas de control de calidad compatibles que se encuentren en el directorio actual y sus subdirectorios.
 
 ### Limpieza con trim galore
 
@@ -242,15 +260,15 @@ cd barcodes
 cat barcoding_summary.txt | head
 
 filename	read_id	barcode
-converted.pod5	0117390a-08d3-4548-ad37-bbdea086f54b	SQK-16S024_barcode02
-converted.pod5	017d7593-d3df-4c37-941d-2fbb343f47cd	SQK-16S024_barcode02
-converted.pod5	0214a6b5-f1ea-418d-b0f4-2573f31012d8	SQK-16S024_barcode02
-converted.pod5	0355a06e-60bc-438d-8bb6-acadc76b3de4	SQK-16S024_barcode02
-converted.pod5	022ed867-498d-478f-bd99-5546117b2552	SQK-16S024_barcode02
-converted.pod5	02fb5dcf-65da-4123-a894-58fb866e887f	SQK-16S024_barcode02
-converted.pod5	01e37d3d-e728-47c5-96b5-de7c3640e6bc	SQK-16S024_barcode02
-converted.pod5	02c9c525-d8b5-47c1-a5dd-6e88efc21387	SQK-16S024_barcode02
-converted.pod5	01f60196-800e-4dd0-b513-853c6a583ae3	SQK-16S024_barcode02
+converted.pod5	79575555-aded-46c6-9f18-e9556fbd576d	SQK-NBD114-24_barcode15
+converted.pod5	00870608-57ee-497a-a738-b31d4876c161	unclassified
+converted.pod5	0054a804-cf1f-4218-9877-f490288b5675	unclassified
+converted.pod5	0046d92e-d735-4f25-9fb3-6b80ef88a3fd	unclassified
+converted.pod5	032006e4-6d5a-4e8e-a1f7-e6f695d732ad	unclassified
+converted.pod5	03d484a9-6644-4856-bf4e-ddf071e2a52e	unclassified
+converted.pod5	013562b4-3582-4bf5-852d-11297ed2b35f	unclassified
+converted.pod5	037de90d-c40a-4ae4-8b7b-887350c6c219	unclassified
+converted.pod5	043aa25b-75b0-4363-ab12-3c3fe75dcf89	unclassified
 ```
 
 #### Resumen de la secuenciación 
@@ -262,18 +280,14 @@ for file in *.bam; do prefix="${file%.bam}"; dorado summary "$file" > "${prefix}
 > **Comentario:** Genera un resumen para cada archivo BAM en el directorio y lo guarda en un archivo TSV.
 
 ```
-cat SQK-16S024_barcode02_summary.tsv | head
+cat bcf4b7732185c1a3353d1b4fe80266cd3ac60162_SQK-NBD114-24_barcode13_summary.tsv | head
 
 filename	read_id	run_id	channel	mux	start_time	duration	template_start	template_duration	sequence_length_template	mean_qscore_template	barcode
-converted.pod5	0117390a-08d3-4548-ad37-bbdea086f54b	8371d699ccb2363baf11e06bf47184641336067a	28	1	19382.4	4.21525	19382.4	4.21525	1343	12.3944	SQK-16S024_barcode02
-converted.pod5	017d7593-d3df-4c37-941d-2fbb343f47cd	8371d699ccb2363baf11e06bf47184641336067a	364	4	19455.5	4.32825	19455.5	4.32825	1459	13.7667	SQK-16S024_barcode02
-converted.pod5	0214a6b5-f1ea-418d-b0f4-2573f31012d8	8371d699ccb2363baf11e06bf47184641336067a	165	3	2941.15	4.40425	2941.15	4.40425	1425	10.4715	SQK-16S024_barcode02
-converted.pod5	0355a06e-60bc-438d-8bb6-acadc76b3de4	8371d699ccb2363baf11e06bf47184641336067a	476	4	20144	2.22075	20144	2.22075	621	13.4812	SQK-16S024_barcode02
-converted.pod5	022ed867-498d-478f-bd99-5546117b2552	8371d699ccb2363baf11e06bf47184641336067a	224	1	6611.75	3.621	6611.75	3.621	1301	10.6204	SQK-16S024_barcode02
-converted.pod5	02fb5dcf-65da-4123-a894-58fb866e887f	8371d699ccb2363baf11e06bf47184641336067a	101	2	17048	4.478	17048	4.478	1350	11.4253	SQK-16S024_barcode02
-converted.pod5	01e37d3d-e728-47c5-96b5-de7c3640e6bc	8371d699ccb2363baf11e06bf47184641336067a	440	4	7330.72	3.80175	7330.72	3.80175	1446	11.2083	SQK-16S024_barcode02
-converted.pod5	02c9c525-d8b5-47c1-a5dd-6e88efc21387	8371d699ccb2363baf11e06bf47184641336067a	468	4	17689.1	4.78125	17689.1	4.78125	1373	12.9938	SQK-16S024_barcode02
-converted.pod5	01f60196-800e-4dd0-b513-853c6a583ae3	8371d699ccb2363baf11e06bf47184641336067a	232	2	11831.6	2.98875	11831.6	2.98875	1061	11.7921	SQK-16S024_barcode02
+converted.pod5	05886056-e7c4-4c7f-9f61-a1f025b940a4	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	31	1	9069.31	1.7564	9069.31	1.7564	678	10.5307	SQK-NBD114-24_barcode13
+converted.pod5	a87c7559-6f22-463c-b288-a281fa7b0b41	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	66	1	9083.14	0.9576	9083.14	0.9576	219	11.1093	SQK-NBD114-24_barcode13
+converted.pod5	44432ea9-99d6-4f46-aba7-82a288b6c9ff	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	132	3	8941.51	1.6908	8941.51	1.6908	621	9.64351	SQK-NBD114-24_barcode13
+converted.pod5	af970a9d-239a-4623-80a3-7e26485f66ae	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	328	3	9135.62	3.1966	9135.62	3.1966	1267	12.403	SQK-NBD114-24_barcode13
+converted.pod5	9a105f99-ef53-43bb-9e26-321139cd8bad	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	434	4	9016.32	1.05	9016.32	1.05	219	8.39137	SQK-NBD114-24_barcode13
 ```
 
 ### Convertimos de bam a fastq

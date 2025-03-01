@@ -33,6 +33,10 @@ Guppy es un programa de basecalling y análisis de datos de secuenciación de na
 ```bash
 cd
 
+mkdir genomics
+
+cd genomics
+
 mkdir software
 
 cd software
@@ -79,13 +83,12 @@ pip install pod5
 
 ```bash
 conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trim-galore trimmomatic
-
 ```
 
 ## 2. Obtención de los datos de secuenciación 
 
 ```bash
-cd
+cd ~/genomics
 
 mkdir raw_data
 
@@ -106,39 +109,54 @@ gdown https://drive.google.com/uc?id=1uU_4PkarRHT6NHYru3YjRTAlKmAzAOh2
 unzip pod5.zip
 
 unzip fast5.zip 
-
-## 2. Obtención de los datos de secuenciación 
-
-```bash
-cd
-
-mkdir raw_data
-
-cd raw_data
-
-$ mkdir quality
-$ cd quality
-$ conda activate nanopore_01
-$ fastqc -t 10 /data/2024_2/genome/illumina/*.fastq.gz -o .
 ```
 
-### 2. Obtención de los datos de secuenciación 
+## 3. Analisis de calidad de datos de secuenciación Illumina
 
 ```bash
-$ cd ~/illumina/
-$ mkdir trim
-$ cd trim
-$ mkdir trim_galore
-$ cd trim_galore
-$ trim_galore --quality 30 --length 50 --phred33 --cores 4 --fastqc --paired /data/2024_2/genome/illumina/CAT_R1.fastq.gz /data/2024_2/genome/illumina/CAT_R2.fastq.gz
+cd ~/genomics
+
+mkdir quality
+
+cd quality
+
+mkdir illumina
+
+cd illumina
+
+conda activate quality
+
+fastqc -t 2 /data/2024_2/genome/illumina/*.fastq.gz -o .
+
+multiqc -o raw_illumina .
 ```
 
+### Limpieza con trim galore
+
 ```bash
-$ cd ~/b00_genome/illumina/trim/
-$ mkdir trimmomatic
-$ cd trimmomatic
-$ nano NexteraPE.fa
+cd ~/genomics
+
+mkdir trimming
+
+cd trimming
+
+mkdir trim_galore
+
+cd trim_galore
+
+trim_galore --quality 30 --length 50 --phred33 --cores 2 --fastqc --paired /home/ins_user/genomics/raw_data/T4_S1_L001_R1_001.fastq.gz /home/ins_user/genomics/raw_data/T4_S1_L001_R2_001.fastq.gz
 ```
+
+### Limpieza con trimmomatic
+
+```bash
+cd ~/genomics/trimming
+
+mkdir trimmomatic
+
+cd trimmomatic
+
+nano NexteraPE.fa
 
 ```plaintext
 >PrefixNX/1

@@ -195,9 +195,11 @@ cd ~/genomics/trimming
 mkdir trimmomatic
 
 cd trimmomatic
+```
 
 > **Comentario:** Crear el archivo NexteraPE.fa
 
+```bash
 nano NexteraPE.fa
 
 >PrefixNX/1

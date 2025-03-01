@@ -3,12 +3,10 @@
 ## Estructura de la práctica:
 
 1. Instalación de programas
-2. Análisis de calidad del secuenciamiento Illumina
-3. Limpieza de los archivos FASTQ de Illumina
-4. Basecalling de los archivos FAST5
-5. Basecalling de los archivos POD5
-6. Análisis de calidad del secuenciamiento Nanopore 
-7. Limpieza de los archivos FASTQ de Nanopore 
+2. Obtención de los datos de secuenciación 
+3. Análisis de calidad de datos de secuenciación Illumina
+4. Basecalling de datos de secuenciación Nanopore
+5. Análisis de calidad de datos de secuenciación Nanopore
 
 ## Programas bioinformáticos:
 
@@ -73,11 +71,11 @@ dorado --help
 
 Permite convertir fast5 a pod5 antes del basecalling
 
-> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5
-
 ```bash
 pip install pod5 
 ```
+
+> **Comentario:** POD5 es un formato de archivo desarrollado por Oxford Nanopore Technologies para almacenar datos de secuenciación de nanoporos. Es un formato más eficiente y comprimido que FAST5
 
 ### Instalar los siguientes programas en un ambiente de conda
 
@@ -214,7 +212,9 @@ CTGTCTCTTATACACATCTGACGCTGCCGACGA
 GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG
 >Trans2_rc
 CTGTCTCTTATACACATCTCCGAGCCCACGAGAC
+```
 
+```bash
 trimmomatic PE /home/ins_user/genomics/raw_data/T4_S1_L001_R1_001.fastq.gz /home/ins_user/genomics/raw_data/T4_S1_L001_R2_001.fastq.gz T4_R1.trim.fastq.gz T4_R1.unpaired.fastq.gz T4_R2.trim.fastq.gz T4_R2.unpaired.fastq.gz ILLUMINACLIP:NexteraPE.fa:2:30:10 SLIDINGWINDOW:4:30 MINLEN:50 -threads 2
 ```
 
@@ -251,6 +251,11 @@ cd basecalling
 guppy_basecaller -i /home/ins_user/genomics/raw_data/fast5 -s fast5 -c dna_r10.4_e8.1_fast.cfg
 ```
 
+> **Comentario:** 
+> - `-i /home/ins_user/genomics/raw_data/fast5`: Esta opción especifica el directorio de entrada donde se encuentran los archivos de datos de secuenciación crudos (en formato FAST5). Guppy leerá todos los archivos FAST5 dentro de este directorio.
+> - `-s fast5`: Esta opción especifica el directorio de salida donde se escribirán los datos convertidos. La bandera -s significa "ruta de guardado" (save path). Guppy creará un nuevo directorio llamado "fast5" dentro del directorio de trabajo actual y almacenará los archivos de salida allí.
+> - `-c dna_r10.4_e8.1_fast.cfg`: Esta opción especifica el archivo de configuración que se utilizará para el "basecalling". El archivo dna_r10.4_e8.1_fast.cfg contiene ajustes optimizados para la celda de flujo R10.4 y el modelo de "basecalling" "fast" (rápido). Este modelo prioriza la velocidad sobre la máxima precisión.
+
 ### Basecalling de POD5
 
 #### Obtención de archivos POD5
@@ -272,9 +277,27 @@ pod5 convert fast5 /home/ins_user/genomics/raw_data/fast5/*.fast5 --output conve
 
 ```bash
 dorado basecaller fast --kit-name SQK-NBD114-24 --min-qscore 8 --barcode-both-ends converted.pod5 > calls.bam
+```
 
+> **Comentario:** 
+> - `basecaller fast`: Esto invoca el programa Dorado en modo "basecaller" (llamador de bases) y utiliza el modo "fast" (rápido). El modo rápido prioriza la velocidad sobre la precisión.
+> - `--kit-name SQK-NBD114-24`: Especifica el nombre del kit de secuenciación utilizado.
+> - `--min-qscore 8`: Establece un umbral de calidad mínimo de 8 para las lecturas.
+> - `--barcode-both-ends`: Indica que los códigos de barras están presentes en ambos extremos de las lecturas.
+> - `> calls.bam`: Redirige la salida a un archivo BAM llamado `calls.bam`.
+
+```bash
 dorado demux --kit-name SQK-NBD114-24 --output-dir barcodes --emit-summary calls.bam
+```
 
+> **Comentario:** 
+> - `demux`: Invoca la función de desmultiplexación de la herramienta Dorado.
+> - `--kit-name SQK-NBD114-24`: Indica el kit de secuenciación que se usó. Dorado necesita esta información para saber qué códigos de barras buscar y cómo interpretarlos.
+> - `--output-dir barcodes`: Especifica que los archivos de salida se guarden en un directorio llamado "barcodes". Dentro de este directorio, se creará un archivo BAM para cada código de barras, conteniendo las lecturas correspondientes.
+> - `--emit-summary`: Indica que se genere un archivo de resumen que contenga información sobre la clasificación de las lecturas por código de barras.
+> - `calls.bam`: Es el archivo de entrada, que en este caso es el archivo BAM generado por el comando dorado basecaller que vimos anteriormente.
+
+```bash
 cd barcodes
 ```
 
@@ -320,42 +343,32 @@ converted.pod5	af970a9d-239a-4623-80a3-7e26485f66ae	bcf4b7732185c1a3353d1b4fe802
 converted.pod5	9a105f99-ef53-43bb-9e26-321139cd8bad	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	434	4	9016.32	1.05	9016.32	1.05	219	8.39137	SQK-NBD114-24_barcode13
 ```
 
-### Convertimos de bam a fastq
+### Conversión de bam a fastq
 
 ```bash
 for file in *.bam; do prefix="${file%.bam}"; samtools sort -n "$file" -o "${prefix}_sorted.bam"; done
+
 for file in *_sorted.bam; do prefix="${file%.bam}"; bedtools bamtofastq -i "${prefix}.bam" -fq "${prefix}.fastq"; done
+
 seqkit stats -a -j 4 *_sorted.fastq > stats_sorted_fastq.txt
 ```
 
 > **Comentario:** 
 > - `samtools sort -n`: Ordena los archivos BAM por nombre de lectura.
 > - `bedtools bamtofastq`: Convierte los archivos BAM ordenados a formato FASTQ.
+> - `seqkit stats`: Calcula las estadísticas de archivos FASTQ que han sido previamente ordenados.
 
 ```bash
-file                               format  type  num_seqs      sum_len  min_len  avg_len  max_len       Q1       Q2     Q3  sum_gap    N50  Q20(%)  Q30(%)
-SQK-16S024_barcode01_sorted.fastq  FASTQ   DNA      2,232    2,812,246        2    1,260    3,808    1,230    1,405  1,455        0  1,421   50.76    8.48
-SQK-16S024_barcode02_sorted.fastq  FASTQ   DNA      1,626    1,903,444        4  1,170.6    1,953      980    1,387  1,452        0  1,413   50.53    8.58
-SQK-16S024_barcode03_sorted.fastq  FASTQ   DNA     12,802   15,342,892        7  1,198.5    2,877    1,077    1,394  1,445        0  1,408   50.64    7.79
-SQK-16S024_barcode04_sorted.fastq  FASTQ   DNA      8,550    9,958,508        9  1,164.7    2,091    1,029    1,387  1,436        0  1,402    50.3     7.5
-SQK-16S024_barcode05_sorted.fastq  FASTQ   DNA        678      871,012       59  1,284.7    1,937    1,333    1,404  1,455        0  1,419   49.97    7.33
-SQK-16S024_barcode06_sorted.fastq  FASTQ   DNA      3,192    4,003,420        3  1,254.2    2,250    1,306    1,407  1,452        0  1,421   51.25    7.43
-SQK-16S024_barcode07_sorted.fastq  FASTQ   DNA     12,476   14,802,626        4  1,186.5    2,838    1,053    1,395  1,448        0  1,409   50.54    7.45
-SQK-16S024_barcode08_sorted.fastq  FASTQ   DNA        312      437,058       28  1,400.8    1,861  1,389.5    1,421  1,454        0  1,424   50.44    8.41
-SQK-16S024_barcode09_sorted.fastq  FASTQ   DNA     22,938   18,677,366        2    814.3    1,993      346      873  1,335        0  1,254   51.16    7.87
-SQK-16S024_barcode10_sorted.fastq  FASTQ   DNA     17,742   19,764,174        8    1,114    2,654      717    1,308  1,409        0  1,391   50.81    8.19
-SQK-16S024_barcode11_sorted.fastq  FASTQ   DNA     13,662   14,534,452        1  1,063.9    2,029      838    1,192  1,384        0  1,337   50.87    7.85
-SQK-16S024_barcode12_sorted.fastq  FASTQ   DNA     11,866   13,408,054       10    1,130    2,012      944    1,335  1,399        0  1,377   50.37     7.7
-SQK-16S024_barcode13_sorted.fastq  FASTQ   DNA     13,526   15,222,272        1  1,125.4    2,696      914    1,326  1,398        0  1,374   50.65    7.65
-SQK-16S024_barcode14_sorted.fastq  FASTQ   DNA     16,278   15,979,112        2    981.6    2,320      504    1,126  1,392        0  1,359   50.59    8.19
-SQK-16S024_barcode15_sorted.fastq  FASTQ   DNA     14,378   16,015,288        2  1,113.9    2,440      831    1,338  1,402        0  1,388   50.57    7.33
-SQK-16S024_barcode16_sorted.fastq  FASTQ   DNA     14,146   15,581,836        2  1,101.5    2,109      814    1,300  1,400        0  1,379   50.65     7.9
-SQK-16S024_barcode17_sorted.fastq  FASTQ   DNA     17,988   18,836,740        2  1,047.2    3,057      624  1,304.5  1,399        0  1,380   50.24    7.07
-SQK-16S024_barcode18_sorted.fastq  FASTQ   DNA     16,030   16,605,426        2  1,035.9    2,088      537    1,287  1,399        0  1,386   50.48    7.85
-unclassified_sorted.fastq          FASTQ   DNA    474,168  648,009,092        7  1,366.6    4,216    1,393    1,405  1,421        0  1,406   53.45    8.42
+cat barcoding_summary.txt | head
+
+file                                                                           format  type  num_seqs    sum_len  min_len  avg_len  max_len     Q1     Q2     Q3  sum_gap    N50  N50_num  Q20(%)  Q30(%)  AvgQual  GC(%)  sum_n
+bcf4b7732185c1a3353d1b4fe80266cd3ac60162_SQK-NBD114-24_barcode13_sorted.fastq  FASTQ   DNA         10      6,008      219    600.8    1,267    219    621    678        0    678        2   45.21   17.71    11.17  35.92      0
+bcf4b7732185c1a3353d1b4fe80266cd3ac60162_SQK-NBD114-24_barcode14_sorted.fastq  FASTQ   DNA      5,854  6,073,564       16  1,037.5   20,665    445    700  1,179        0  1,405      481   47.28    18.5    11.38  45.46      0
+bcf4b7732185c1a3353d1b4fe80266cd3ac60162_SQK-NBD114-24_barcode15_sorted.fastq  FASTQ   DNA          2      2,900    1,450    1,450    1,450  1,450  1,450  1,450        0  1,450        1   51.93   23.24    12.08     52      0
+bcf4b7732185c1a3353d1b4fe80266cd3ac60162_unclassified_sorted.fastq             FASTQ   DNA      2,156  2,567,210       28  1,190.7   26,377    585    859  1,351        0  1,439      223   47.34    18.8    11.34  45.45      0
 ```
 
-## 4. Análisis de calidad del secuenciamiento Nanopore (30 minutos)
+## 5. Análisis de calidad del secuenciamiento Nanopore 
 
 ```bash
 $ cd ~/b00_genome/

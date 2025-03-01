@@ -128,6 +128,12 @@ conda activate quality
 
 fastqc -t 2 /data/2024_2/genome/illumina/*.fastq.gz -o .
 
+> **Comentario:** 
+> - `-t 2`: Esta opción especifica el número de hilos (threads) que FastQC debe utilizar. Al usar múltiples hilos, el programa puede procesar los datos más rápidamente. En este caso, se están usando 2 hilos.
+> - `/data/2024_2/genome/illumina/*.fastq.gz`: Esta parte del comando indica la ubicación de los archivos que FastQC debe analizar.
+> - `*.fastq.gz`: Es un comodín que selecciona todos los archivos en ese directorio que terminan con ".fastq.gz". Esto significa que FastQC analizará todos los archivos FASTQ comprimidos en ese directorio. Los archivos fastq.gz son el formato de archivos donde se guardan las lecturas de las secuencias de ADN.
+> - `-o .`: Esta opción define el directorio de salida. El punto "." representa el directorio actual. Esto significa que los informes HTML generados por FastQC se guardarán en el mismo directorio donde se ejecuta el comando.
+
 multiqc -o raw_illumina .
 ```
 
@@ -213,36 +219,19 @@ pod5 convert fast5 /home/ins_user/genomics/raw_data/fast5/*.fast5 --output conve
 
 > **Comentario:** Esta línea de código utiliza `pod5` para convertir todos los archivos FAST5 en el directorio `fast5` a un único archivo POD5 llamado `converted.pod5`
 
-### Descargar modelos con dorado
+#### Realizamos el llamado de las bases
 
 ```bash
-mkdir DB
-cd DB
-mkdir dorado_models
-cd dorado_models
-dorado download
-mkdir sup fast hac stereo
-mv *_sup@* sup
-mv *_fast@* fast
-mv *_hac@* hac
-mv *_stereo@* stereo/
-# Ejemplo de creación de enlace simbólico
-ln -s /media/prosopis/E/LGBB/Server/rodrigo.suarez/Endofitos_ramas/dorado_models/sup /usr/local/bin/sup
-```
+dorado basecaller fast --kit-name SQK-NBD114-24 --min-qscore 8 --barcode-both-ends converted.pod5 > calls.bam
 
-> **Comentario:** Estas líneas de código descargan los modelos basecaller de dorado y los organizan en directorios.
+dorado demux --kit-name SQK-NBD114-24 --output-dir barcodes --emit-summary calls.bam
 
-### Realizamos el llamado de las bases
-
-```bash
-dorado basecaller sup --kit-name SQK-16S024 --min-qscore 10 --barcode-both-ends converted.pod5 > calls.bam
-dorado demux --kit-name SQK-16S024 --output-dir barcodes --emit-summary calls.bam
 cd barcodes
 ```
 
 > **Comentario:** 
 > - `--kit-name SQK-16S024`: Especifica el nombre del kit de secuenciación utilizado.
-> - `--min-qscore 10`: Establece un umbral de calidad mínimo de 10 para las lecturas.
+> - `--min-qscore 8`: Establece un umbral de calidad mínimo de 8 para las lecturas.
 > - `--barcode-both-ends`: Indica que los códigos de barras están presentes en ambos extremos de las lecturas.
 > - `> calls.bam`: Redirige la salida a un archivo BAM llamado `calls.bam`.
 > - `--output-dir barcodes`: Especifica el directorio de salida para los archivos demultiplexados.

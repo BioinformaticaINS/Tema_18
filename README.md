@@ -198,8 +198,17 @@ guppy_basecaller -i /home/ins_user/genomics/raw_data/fast5 -s fast5 -c dna_r10.4
 
 ### Basecalling de POD5
 
+#### Obtención de archivos POD5
 ```bash
-pod5 convert fast5 fast5/*.fast5 --output converted.pod5
+cd ~/genomics/basecalling
+
+mkdir pod5
+
+cd pod5
+
+conda deactivate
+
+pod5 convert fast5 /home/ins_user/genomics/raw_data/fast5/*.fast5 --output converted.pod5
 ```
 
 > **Comentario:** Esta línea de código utiliza `pod5` para convertir todos los archivos FAST5 en el directorio `fast5` a un único archivo POD5 llamado `converted.pod5`

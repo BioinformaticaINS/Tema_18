@@ -80,22 +80,49 @@ pip install pod5
 ```bash
 conda create -n quality -c bioconda fastqc nanofilt nanoplot multiqc porechop trim-galore trimmomatic
 
-conda activate quality
 ```
 
-## 2. Análisis de calidad del secuenciamiento Illumina
+## 2. Obtención de los datos de secuenciación 
 
 ```bash
-$ cd
-$ mkdir illumina
-$ cd illumina
+cd
+
+mkdir raw_data
+
+cd raw_data
+
+### Datos de Illumina
+
+gdown https://drive.google.com/uc?id=1hpoWBRzA2OzWbtxtvwqM-3qnauhM1ulk
+
+gdown https://drive.google.com/uc?id=1GUHeRwpfelPAmU5b6dPoiT79iQ-QQYMP
+
+### Datos de Nanopore
+
+gdown https://drive.google.com/uc?id=1sJ_07QKeTq4DbyyQWPY5aqU8Nyf2bBoO
+
+gdown https://drive.google.com/uc?id=1uU_4PkarRHT6NHYru3YjRTAlKmAzAOh2
+
+unzip pod5.zip
+
+unzip fast5.zip 
+
+## 2. Obtención de los datos de secuenciación 
+
+```bash
+cd
+
+mkdir raw_data
+
+cd raw_data
+
 $ mkdir quality
 $ cd quality
 $ conda activate nanopore_01
 $ fastqc -t 10 /data/2024_2/genome/illumina/*.fastq.gz -o .
 ```
 
-### 2. Limpieza de los archivos FASTQ de Illumina (40 minutos)
+### 2. Obtención de los datos de secuenciación 
 
 ```bash
 $ cd ~/illumina/

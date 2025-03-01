@@ -53,7 +53,6 @@ guppy_basecaller -h
 Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
 
 ```bash
-
 wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
 
 tar xvfz dorado-0.9.1-linux-x64.tar.gz
@@ -139,9 +138,9 @@ cd illumina
 
 conda activate quality
 
-fastqc -t 2 /data/2024_2/genome/illumina/*.fastq.gz -o .
-
+fastqc -t 2 /home/ins_user/genomics/raw_data/*.fastq.gz -o .
 ```
+
 > **Comentario:** 
 > - `-t 2`: Esta opción especifica el número de hilos (threads) que FastQC debe utilizar. Al usar múltiples hilos, el programa puede procesar los datos más rápidamente. En este caso, se están usando 2 hilos.
 > - `/data/2024_2/genome/illumina/*.fastq.gz`: Esta parte del comando indica la ubicación de los archivos que FastQC debe analizar.
@@ -163,6 +162,10 @@ cd ~/genomics
 mkdir trimming
 
 cd trimming
+
+mkdir illumina
+
+cd illumina
 
 mkdir trim_galore
 
@@ -188,7 +191,7 @@ multiqc -o trimming_trim_galore .
 ### Limpieza con trimmomatic
 
 ```bash
-cd ~/genomics/trimming
+cd ~/genomics/trimming/illumina
 
 mkdir trimmomatic
 
@@ -229,7 +232,6 @@ trimmomatic PE /home/ins_user/genomics/raw_data/T4_S1_L001_R1_001.fastq.gz /home
 > - `ILLUMINACLIP:NexteraPE.fa:2:30:10`: Son los parámetros para el recorte de adaptadores (mismatch allowance:palindrom match threshold:simple match threshold).
 > - `SLIDINGWINDOW:4:30`: Indica que se va a utilizar una ventana deslizante de 4 bases y que la calidad promedio mínima dentro de la ventana debe ser 30.
 > - `MINLEN:50`: Esta opción establece la longitud mínima de las lecturas después del recorte. Las lecturas que sean más cortas que 50 bases serán descartadas.
-> - `-threads 2`: Esta opción especifica el número de núcleos de procesamiento que Trimmomatic debe utilizar. En este caso, se están utilizando 2 núcleos para acelerar el procesamiento.
 
 ```bash
 fastqc -t 2 *.trim.fastq.gz -o .
@@ -273,7 +275,7 @@ pod5 convert fast5 /home/ins_user/genomics/raw_data/fast5/*.fast5 --output conve
 
 > **Comentario:** Esta línea de código utiliza `pod5` para convertir todos los archivos FAST5 en el directorio `fast5` a un único archivo POD5 llamado `converted.pod5`
 
-#### Realizamos el llamado de las bases
+#### Basecalling y desmultiplexación
 
 ```bash
 dorado basecaller fast --kit-name SQK-NBD114-24 --min-qscore 8 --barcode-both-ends converted.pod5 > calls.bam
@@ -343,7 +345,7 @@ converted.pod5	af970a9d-239a-4623-80a3-7e26485f66ae	bcf4b7732185c1a3353d1b4fe802
 converted.pod5	9a105f99-ef53-43bb-9e26-321139cd8bad	bcf4b7732185c1a3353d1b4fe80266cd3ac60162	434	4	9016.32	1.05	9016.32	1.05	219	8.39137	SQK-NBD114-24_barcode13
 ```
 
-### Conversión de bam a fastq
+#### Conversión de bam a fastq
 
 ```bash
 for file in *.bam; do prefix="${file%.bam}"; samtools sort -n "$file" -o "${prefix}_sorted.bam"; done
@@ -370,63 +372,77 @@ bcf4b7732185c1a3353d1b4fe80266cd3ac60162_unclassified_sorted.fastq             F
 
 ## 5. Análisis de calidad del secuenciamiento Nanopore 
 
+### Concatenado de los archivos FASTQ
+
 ```bash
-$ cd ~/b00_genome/
-$ mkdir raw_data
-$ cd raw_data
-$ cat /data/2024_2/genome/fastq/barcode00/pass/*.fastq > b00_sup.fastq
+cd ~/genomics/raw_data
+
+mkdir nanopore
+
+cd nanopore
+
+cat /home/ins_user/genomics/basecalling/fast5/pass/*.fastq > b01_fast.fastq
 ```
 
+### Visualización de la calidad
+
 ```bash
-$ cd ~/b00_genome/
-$ mkdir quality
-$ cd quality
-$ mkdir pycoqc
-$ cd pycoqc
-$ conda activate nanopore_00
-$ pycoQC -f /data/2024_2/genome/fastq/barcode00/sequencing_summary.txt --html_outfile b00_sup_pycoqc.html
+cd ~/genomics/quality
+
+mkdir nanopore
+
+cd nanopore
+
+NanoPlot -t 2 --fastq /home/ins_user/genomics/raw_data/nanopore/b01_fast.fastq -p b01_fast_raw_ -o b01_fast_raw --maxlength 100000
 ```
 
+> **Comentario:** 
+> - `--fastq /home/ins_user/genomics/raw_data/nanopore/b01_fast.fastq`: Indica la ruta del archivo FASTQ que contiene las lecturas de secuenciación de ONT que se van a analizar.
+> - `-p b01_fast_raw_`: Define el prefijo que se usará para los nombres de los archivos de salida. En este caso, todos los gráficos generados comenzarán con "b01_fast_raw_".
+> - `-o b01_fast_raw`: Especifica el directorio de salida donde se guardarán los gráficos. Si el directorio no existe, NanoPlot lo creará.
+> - `--maxlength 100000`: Establece la longitud máxima que se mostrará en los gráficos. Las lecturas que superen esta longitud serán truncadas en las visualizaciones. Esto ayuda a enfocar el análisis en la mayoría de las lecturas y evita que las lecturas extremadamente largas distorsionen la visualización.
+
+### Eliminación de adaptadores
+
 ```bash
-$ cd ~/b00_genome/quality/
-$ mkdir fastqc
-$ cd fastqc
-$ conda activate nanopore_01
-$ fastqc -t 20 /home/alumnoZZ/b00_genome/raw_data/b00_sup.fastq -o .
+cd ~/genomics/trimming/
+
+mkdir nanopore
+
+cd nanopore
+
+mkdir porechop
+
+cd porechop
+
+porechop -t 2 -i /home/ins_user/genomics/raw_data/nanopore/b01_fast.fastq -o b01_fast_porechop.fastq.gz
 ```
 
+> **Comentario:** 
+> - `-i /home/ins_user/genomics/raw_data/nanopore/b01_fast.fastq`: Esta opción indica la ruta del archivo FASTQ de entrada. Este es el archivo que contiene las lecturas de secuenciación de ONT que se van a procesar.
+> - `-o b01_fast_porechop.fastq.gz`: Esta opción especifica el nombre del archivo FASTQ de salida comprimido con gzip. Este archivo contendrá las lecturas después de que Porechop haya recortado los adaptadores y separado las lecturas concatenadas.
+
+### Eliminación de lecturas de baja calidad
+
 ```bash
-$ cd ~/b00_genome/quality/
-$ mkdir nanoplot
-$ cd nanoplot
-$ NanoPlot -t 20 --fastq /home/alumnoZZ/b00_genome/raw_data/b00_sup.fastq -p b00_sup_raw_ -o b00_sup_raw --maxlength 100000000
+cd ~/genomics/trimming/nanopore
+
+mkdir nanofilt
+
+cd nanofilt
+
+gunzip -c /home/ins_user/genomics/trimming/nanopore/porechop/b01_fast_porechop.fastq.gz | NanoFilt -q 9 --length 1000 | gzip > b01_fast_nanofilt.fastq.gz
 ```
 
-## 5. Limpieza de los archivos FASTQ de Nanopore (80 minutos)
+> **Comentario:** 
+> - `gunzip -c /home/ins_user/genomics/trimming/nanopore/porechop/b01_fast_porechop.fastq.gz`: Descomprime el archivo "b01_fast_porechop.fastq.gz".
+> - `NanoFilt -q 9 --length 1000`: Filtra las lecturas descomprimidas utilizando NanoFilt, manteniendo solo aquellas que tengan un puntaje de calidad mínimo de 9 y una longitud mínima de 1000 bases.
+> - `gzip > b01_fast_nanofilt.fastq.gz`: Comprime las lecturas filtradas y las guarda en un nuevo archivo llamado "b01_fast_nanofilt.fastq.gz".
+> - `|`: Este símbolo es una "tubería" (pipe) que conecta la salida de un comando a la entrada de otro. 
 
 ```bash
-$ cd ~/b00_genome/
-$ mkdir trim
-$ cd trim
-$ mkdir porechop
-$ cd porechop
-$ porechop -t 20 -i /home/alumnoZZ/b00_genome/raw_data/b00_sup.fastq -o b00_sup_porechop.fastq.gz
-```
+cd ~/genomics/quality/nanopore
 
-```bash
-$ cd ~/b00_genome/quality/nanoplot/
-$ NanoPlot -t 20 --fastq /home/alumnoZZ/b00_genome/trim/porechop/b00_sup_porechop.fastq.gz -p b00_sup_porechop_ -o b00_sup_porechop --maxlength 100000000
-```
-
-```bash
-$ cd ~/b00_genome/trim/
-$ mkdir nanofilt
-$ cd nanofilt
-$ gunzip -c /home/alumnoZZ/b00_genome/trim/porechop/b00_sup_porechop.fastq.gz | NanoFilt -q 10 --length 1000 | gzip > b00_sup_nanofilt.fastq.gz
-```
-
-```bash
-$ cd ~/b00_genome/quality/nanoplot/
-$ NanoPlot -t 20 --fastq /home/alumnoZZ/b00_genome/trim/nanofilt/b00_sup_nanofilt.fastq.gz -p b00_sup_nanofilt_ -o b00_sup_nanofilt --maxlength 100000000
+NanoPlot -t 2 --fastq /home/ins_user/genomics/trimming/nanopore/nanofilt/b01_fast_nanofilt.fastq.gz -p b00_fast_filt_ -o b01_fast_filt --maxlength 100000
 ```
 

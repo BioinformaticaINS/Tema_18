@@ -336,6 +336,8 @@ converted.pod5	9a105f99-ef53-43bb-9e26-321139cd8bad	bcf4b7732185c1a3353d1b4fe802
 #### Conversión de bam a fastq
 
 ```bash
+conda activate quality
+
 for file in *.bam; do prefix="${file%.bam}"; samtools sort -n "$file" -o "${prefix}_sorted.bam"; done
 
 for file in *_sorted.bam; do prefix="${file%.bam}"; bedtools bamtofastq -i "${prefix}.bam" -fq "${prefix}.fastq"; done

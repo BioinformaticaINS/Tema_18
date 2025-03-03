@@ -49,7 +49,7 @@ cd dorado-0.9.1-linux-x64
 
 cd bin
 
-sudo ln -s /home/ins_user/software/dorado-0.9.1-linux-x64/bin/dorado /usr/local/bin/dorado
+sudo ln -s /home/ins_user/genomics/software/dorado-0.9.1-linux-x64/bin/dorado /usr/local/bin/dorado
 
 dorado --help
 ```

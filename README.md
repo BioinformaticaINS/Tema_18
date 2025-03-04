@@ -41,6 +41,8 @@ guppy_basecaller -h
 Dorado es un programa de basecalling y análisis de datos de secuenciación de nanoporos desarrollado por Oxford Nanopore Technologies.
 
 ```bash
+cd ~/genomics/software
+
 wget https://cdn.oxfordnanoportal.com/software/analysis/dorado-0.9.1-linux-x64.tar.gz
 
 tar xvfz dorado-0.9.1-linux-x64.tar.gz
@@ -103,10 +105,6 @@ gdown https://drive.google.com/uc?id=1GUHeRwpfelPAmU5b6dPoiT79iQ-QQYMP
 ### Datos de Nanopore
 
 gdown https://drive.google.com/uc?id=1FyGJAS33tB-DkbAiL2195ACaWf_qIi3Z
-
-gdown https://drive.google.com/uc?id=1FP6zi0jJmPf6n1ic0Fd3Cdytcf8gY3bk
-
-unzip pod5.zip
 
 unzip fast5.zip 
 ```
